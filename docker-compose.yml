@@ -1,0 +1,108 @@
+# https://microbs.io/docs/apps/ecommerce/
+
+version: "3.9"
+services:
+  ##### Web gateway and session data #####
+  web-gateway:
+    image: microbs/web-gateway:latest
+    build:
+      context: ./microbs-app-ecommerce/src
+      dockerfile: services/web-gateway/Dockerfile
+    environment:
+      SERVICE_HOST_API_GATEWAY: api-gateway
+      SERVICE_PORT_API_GATEWAY: 80
+      SERVICE_HOST_SESSION_DATA: session-data
+      SERVICE_PORT_SESSION_DATA: 6379
+    ports:
+      - "8080:80"
+
+  ##### Session data cache #####
+  session-data:
+    image: microbs/session-data:latest
+    build:
+      context: ./microbs-app-ecommerce/src
+      dockerfile: services/session-data/Dockerfile
+    entrypoint: [ "redis-server", "--dir", "/data" ]
+  session-data-replica:
+    image: microbs/api-cart-data:latest
+    build:
+      context: ./microbs-app-ecommerce/src
+      dockerfile: services/cart-data/Dockerfile
+    entrypoint: [ "redis-server", "--dir", "/data", "--slaveof", "session-data", "6379", "--protected-mode", "no" ]
+
+  ##### API Gateway #####
+  api-gateway:
+    image: microbs/api-gateway:latest
+    build:
+      context: ./microbs-app-ecommerce/src
+      dockerfile: services/api-gateway/Dockerfile
+
+  ##### Cart microservice #####
+  cart:
+    image: microbs/api-cart:latest
+    build:
+      context: ./microbs-app-ecommerce/src
+      dockerfile: services/cart/Dockerfile
+
+  ##### Cart cache #####
+  cart-data:
+    image: microbs/api-cart-data:latest
+    build:
+      context: ./microbs-app-ecommerce/src
+      dockerfile: services/cart-data/Dockerfile
+    entrypoint: ["redis-server", "--dir", "/data"]
+  cart-data-replica:
+    image: microbs/api-cart-data:latest
+    build:
+      context: ./microbs-app-ecommerce/src
+      dockerfile: services/cart-data/Dockerfile
+    entrypoint: [ "redis-server", "--dir", "/data", "--slaveof", "cart-data", "6379", "--protected-mode", "no" ]
+
+  ##### Checkout microservice #####
+  checkout:
+    image: microbs/api-checkout:latest
+    build:
+      context: ./microbs-app-ecommerce/src
+      dockerfile: services/checkout/Dockerfile
+    environment:
+      SERVICE_HOST_API_GATEWAY: api-gateway
+      SERVICE_PORT_API_GATEWAY: 80
+
+  ##### Content microservice #####
+  content:
+    image: microbs/api-content:latest
+    build:
+      context: ./microbs-app-ecommerce/src
+      dockerfile: services/content/Dockerfile
+
+  ##### Payment microservice #####
+  payment:
+    image: microbs/api-payment:latest
+    build:
+      context: ./microbs-app-ecommerce/src
+      dockerfile: services/payment/Dockerfile
+
+  ##### Product microservice #####
+  product:
+    image: microbs/api-product:latest
+    build:
+      context: ./microbs-app-ecommerce/src
+      dockerfile: services/product/Dockerfile
+    environment:
+      SERVICE_HOST_PRODUCT_DATA: product-data
+      SERVICE_PORT_PRODUCT_DATA: 5432
+      SERVICE_USERNAME_PRODUCT_DATA: postgres
+      SERVICE_PASSWORD_PRODUCT_DATA: password
+
+  ##### Product DB #####
+  product-data:
+    image: microbs/api-product-data:latest
+    build:
+      context: ./microbs-app-ecommerce/src
+      dockerfile: services/product-data/Dockerfile
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+
+
+
