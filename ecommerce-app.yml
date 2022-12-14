@@ -5,6 +5,8 @@ services:
   ##### Web gateway and session data #####
   web-gateway:
     image: microbs/web-gateway:latest
+    labels:
+      service: web-gateway
     build:
       context: ./microbs-app-ecommerce/src
       dockerfile: services/web-gateway/Dockerfile
@@ -19,12 +21,16 @@ services:
   ##### Session data cache #####
   session-data:
     image: microbs/session-data:latest
+    labels:
+      service: session-data
     build:
       context: ./microbs-app-ecommerce/src
       dockerfile: services/session-data/Dockerfile
     entrypoint: [ "redis-server", "--dir", "/data" ]
   session-data-replica:
     image: microbs/api-cart-data:latest
+    labels:
+      service: session-data
     build:
       context: ./microbs-app-ecommerce/src
       dockerfile: services/cart-data/Dockerfile
@@ -33,6 +39,8 @@ services:
   ##### API Gateway #####
   api-gateway:
     image: microbs/api-gateway:latest
+    labels:
+      service: api-gateway
     build:
       context: ./microbs-app-ecommerce/src
       dockerfile: services/api-gateway/Dockerfile
@@ -40,6 +48,8 @@ services:
   ##### Cart microservice #####
   cart:
     image: microbs/api-cart:latest
+    labels:
+      service: cart
     build:
       context: ./microbs-app-ecommerce/src
       dockerfile: services/cart/Dockerfile
@@ -47,12 +57,16 @@ services:
   ##### Cart cache #####
   cart-data:
     image: microbs/api-cart-data:latest
+    labels:
+      service: cart-data
     build:
       context: ./microbs-app-ecommerce/src
       dockerfile: services/cart-data/Dockerfile
     entrypoint: ["redis-server", "--dir", "/data"]
   cart-data-replica:
     image: microbs/api-cart-data:latest
+    labels:
+      service: cart-data
     build:
       context: ./microbs-app-ecommerce/src
       dockerfile: services/cart-data/Dockerfile
@@ -61,6 +75,8 @@ services:
   ##### Checkout microservice #####
   checkout:
     image: microbs/api-checkout:latest
+    labels:
+      service: checkout
     build:
       context: ./microbs-app-ecommerce/src
       dockerfile: services/checkout/Dockerfile
@@ -71,6 +87,8 @@ services:
   ##### Content microservice #####
   content:
     image: microbs/api-content:latest
+    labels:
+      service: content
     build:
       context: ./microbs-app-ecommerce/src
       dockerfile: services/content/Dockerfile
@@ -78,6 +96,8 @@ services:
   ##### Payment microservice #####
   payment:
     image: microbs/api-payment:latest
+    labels:
+      service: payment
     build:
       context: ./microbs-app-ecommerce/src
       dockerfile: services/payment/Dockerfile
@@ -85,6 +105,8 @@ services:
   ##### Product microservice #####
   product:
     image: microbs/api-product:latest
+    labels:
+      service: product
     build:
       context: ./microbs-app-ecommerce/src
       dockerfile: services/product/Dockerfile
@@ -97,6 +119,8 @@ services:
   ##### Product DB #####
   product-data:
     image: microbs/api-product-data:latest
+    labels:
+      service: product-data
     build:
       context: ./microbs-app-ecommerce/src
       dockerfile: services/product-data/Dockerfile

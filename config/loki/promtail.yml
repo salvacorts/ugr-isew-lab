@@ -1,5 +1,5 @@
 server:
-  log_level: debug
+  log_level: info
   http_listen_port: 9080
 
 clients:
@@ -16,6 +16,11 @@ scrape_configs:
       - static_labels:
           job: "promtail"
     relabel_configs:
-      - source_labels: [ '__meta_docker_container_name' ]
-        regex: '/(.*)'
+      - source_labels:
+        - '__meta_docker_container_name'
+        regex: '(.*)'
         target_label: 'container'
+      - source_labels:
+        - '__meta_docker_container_label_service'
+        regex: '(.*)'
+        target_label: 'service'

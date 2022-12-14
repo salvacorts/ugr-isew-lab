@@ -6,11 +6,16 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./config/grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./config/grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards
       - grafana-data:/var/lib/grafana
 
   prometheus:
     image: prom/prometheus:v2.30.3
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --enable-feature=remote-write-receiver
     ports:
       - "9090:9090"
     volumes:
@@ -20,6 +25,8 @@ services:
   loki:
     image: grafana/loki:2.6.1
     user: root
+    ports:
+      - "3100:3100"
     command:
       - -config.file=/etc/loki/local-config.yml
     volumes:

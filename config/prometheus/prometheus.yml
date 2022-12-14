@@ -11,4 +11,5 @@ scrape_configs:
           - 'cadvisor:8080'
           - 'grafana:3000'
           - 'loki:3100'
+          - 'promtail:9080'
           - 'tempo:3200'
