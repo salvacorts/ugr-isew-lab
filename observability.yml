@@ -25,6 +25,13 @@ services:
     volumes:
       - ./config/loki/local-config.yml:/etc/loki/local-config.yml
       - loki-data:/data:rw
+  promtail:
+    image: grafana/promtail:2.6.1
+    command:
+      - -config.file=/etc/promtail.yml
+    volumes:
+      - ./config/loki/promtail.yml:/etc/promtail.yml
+      - /var/run/docker.sock:/var/run/docker.sock:ro
 
   tempo:
     image: grafana/tempo:1.5.0
@@ -36,14 +43,6 @@ services:
     volumes:
       - ./config/tempo/local-config.yml:/etc/tempo/local-config.yml
       - tempo-data:/data:rw
-
-  grafana-agent:
-    image: grafana/agent:v0.29.0
-    command:
-      - -config.file=/etc/agent/agent.yml
-    volumes:
-      - ./config/grafana-agent/agent.yml:/etc/agent/agent.yml
-      - /var/run/docker.sock:/var/run/docker.sock:ro
 
   ##### Cadvisor exposes metrics for running containers #####
   cadvisor:
