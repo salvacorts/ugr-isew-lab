@@ -1,0 +1,62 @@
+version: "3.9"
+
+services:
+  grafana:
+    image: grafana/grafana:9.3.1
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources
+      - grafana-data:/var/lib/grafana
+
+  prometheus:
+    image: prom/prometheus:v2.30.3
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+
+  loki:
+    image: grafana/loki:2.6.1
+    user: root
+    command:
+      - -config.file=/etc/loki/local-config.yml
+    volumes:
+      - ./config/loki/local-config.yml:/etc/loki/local-config.yml
+      - loki-data:/data:rw
+
+  tempo:
+    image: grafana/tempo:1.5.0
+    command:
+      - -config.file=/etc/tempo/local-config.yml
+    ports:
+      - "3200:3200" # Tempo
+      - "4317:4317" # otlp
+    volumes:
+      - ./config/tempo/local-config.yml:/etc/tempo/local-config.yml
+      - tempo-data:/data:rw
+
+  grafana-agent:
+    image: grafana/agent:v0.29.0
+    command:
+      - -config.file=/etc/agent/agent.yml
+    volumes:
+      - ./config/grafana-agent/agent.yml:/etc/agent/agent.yml
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  ##### Cadvisor exposes metrics for running containers #####
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.45.0
+    container_name: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+
+volumes:
+  grafana-data:
+  prometheus-data:
+  loki-data:
+  tempo-data:
