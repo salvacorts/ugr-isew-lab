@@ -1,3 +1,4 @@
 [submodule "microbs-app-ecommerce"]
 	path = microbs-app-ecommerce
 	url = git@github.com:salvacorts/microbs-app-ecommerce.git
+	branch = main
