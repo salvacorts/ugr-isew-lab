@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  ##### Load generator: emulates user activity #####
+  load-generator:
+    image: microbs/synthetics:latest
+    build:
+      context: ./microbs-app-ecommerce/src
+      dockerfile: services/synthetics/Dockerfile
+    environment:
+      SERVICE_HOST_WEB_GATEWAY: web-gateway
+      SERVICE_PORT_WEB_GATEWAY: 80
