@@ -1,5 +1,5 @@
 global:
-  scrape_interval: 30s
+  scrape_interval: 10s
   scrape_timeout: 10s
 
 scrape_configs:
@@ -13,3 +13,4 @@ scrape_configs:
           - 'loki:3100'
           - 'promtail:9080'
           - 'tempo:3200'
+          - 'payment:80'

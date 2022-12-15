@@ -1,6 +1,7 @@
 version: "3.9"
 
 services:
+  ##### Grafana for visualization #####
   grafana:
     image: grafana/grafana:9.3.1
     ports:
@@ -11,6 +12,7 @@ services:
       - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards
       - grafana-data:/var/lib/grafana
 
+  ##### Prometheus for metrics #####
   prometheus:
     image: prom/prometheus:v2.30.3
     command:
@@ -22,31 +24,29 @@ services:
       - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
 
+  ##### Loki and Promtail for logs #####
   loki:
-    image: grafana/loki:2.6.1
+    image: grafana/loki:2.7.0
     user: root
-    ports:
-      - "3100:3100"
     command:
       - -config.file=/etc/loki/local-config.yml
     volumes:
       - ./config/loki/local-config.yml:/etc/loki/local-config.yml
+      - ./config/loki/recording-rules.yml:/etc/loki/rules/fake/recording-rules.yaml
       - loki-data:/data:rw
   promtail:
-    image: grafana/promtail:2.6.1
+    image: grafana/promtail:2.7.0
     command:
       - -config.file=/etc/promtail.yml
     volumes:
       - ./config/loki/promtail.yml:/etc/promtail.yml
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
+  ###### Tempo for traces #####
   tempo:
     image: grafana/tempo:1.5.0
     command:
       - -config.file=/etc/tempo/local-config.yml
-    ports:
-      - "3200:3200" # Tempo
-      - "4317:4317" # otlp
     volumes:
       - ./config/tempo/local-config.yml:/etc/tempo/local-config.yml
       - tempo-data:/data:rw
