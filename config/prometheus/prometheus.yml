@@ -7,4 +7,5 @@ scrape_configs:
     static_configs:
       - targets:
           - 'prometheus:9090'
+          - 'grafana:3000'
           - 'cadvisor:8080'
