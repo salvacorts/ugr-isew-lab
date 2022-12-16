@@ -1,0 +1,11 @@
+groups:
+  - name: Grafana
+    interval: 1m
+    rules:
+      - record: grafana_request_completed:rate1m
+        expr: |
+          rate(
+            {container="/ugr-isew-lab-grafana-1"}
+            |= "Request Completed"
+            [1m]
+          )
