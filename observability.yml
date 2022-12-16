@@ -34,6 +34,25 @@ services:
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
 
+  ##### Loki and Promtail for logs #####
+  loki:
+    image: grafana/loki:2.7.0
+    user: root
+    command:
+      - -config.file=/etc/loki/local-config.yml
+    volumes:
+      - ./config/loki/local-config.yml:/etc/loki/local-config.yml
+      - ./config/loki/recording-rules.yml:/etc/loki/rules/fake/recording-rules.yaml
+      - loki-data:/data:rw
+  promtail:
+    image: grafana/promtail:2.7.0
+    command:
+      - -config.file=/etc/promtail.yml
+    volumes:
+      - ./config/loki/promtail.yml:/etc/promtail.yml
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
 volumes:
   grafana-data:
   prometheus-data:
+  loki-data:

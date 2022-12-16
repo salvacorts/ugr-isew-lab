@@ -9,3 +9,5 @@ scrape_configs:
           - 'prometheus:9090'
           - 'grafana:3000'
           - 'cadvisor:8080'
+          - 'loki:3100'
+          - 'promtail:9080'
