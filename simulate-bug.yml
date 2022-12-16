@@ -1,7 +1,0 @@
-version: "3.9"
-services:
-  ##### Override product service with image that has a bug #####
-  product:
-    build:
-      context: ./microbs-app-ecommerce/src
-      dockerfile: variants/basic-bug/product/Dockerfile
