@@ -7,7 +7,34 @@ services:
     ports:
       - "3000:3000"
     volumes:
+      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards
       - grafana-data:/var/lib/grafana
+
+  ##### Prometheus for metrics #####
+  prometheus:
+    image: prom/prometheus:v2.30.3
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --enable-feature=remote-write-receiver
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+
+  ##### Cadvisor exposes metrics for running containers #####
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.45.0
+    ports:
+      - "8081:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+
 
 volumes:
   grafana-data:
+  prometheus-data:
