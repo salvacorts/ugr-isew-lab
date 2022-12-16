@@ -10,3 +10,14 @@ datasources:
     type: loki
     uid: loki
     url: http://loki:3100
+    jsonData:
+      derivedFields:
+        - datasourceUid: tempo
+          matcherRegex: (?:traceID|trace_id)=(\w+)
+          name: TraceID
+          url: $${__value.raw}
+
+  - name: Tempo
+    type: tempo
+    uid: tempo
+    url: http://tempo:3200
