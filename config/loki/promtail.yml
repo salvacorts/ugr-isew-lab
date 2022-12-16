@@ -20,3 +20,7 @@ scrape_configs:
           - '__meta_docker_container_name'
         regex: '(.*)'
         target_label: 'container'
+      - source_labels:
+          - '__meta_docker_container_label_service'
+        regex: '(.*)'
+        target_label: 'service'
